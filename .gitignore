@@ -1,0 +1,19 @@
+# Python
+__pycache__/
+*.pyc
+.venv/
+
+# 金鑰（llm.py 會讀 agent/.env）
+.env
+
+# ROS 2 組裝產物
+build/
+install/
+log/
+
+# 模型權重（Ultralytics 會自動下載 yolo11n.pt）
+*.pt
+
+# 工具產生的圖
+tools/*.png
+maps/*_check.png

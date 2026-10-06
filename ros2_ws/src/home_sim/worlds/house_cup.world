@@ -1,0 +1,95 @@
+<?xml version="1.0"?>
+<!--
+  房子世界：TurtleBot3 房子（turtlebot3_gazebo 的 turtlebot3_house.world）＋ 新加的家具和杯子。
+  房間（每個房間的範圍寫在 nav_tools/places_house.yaml；house_plan.py route 會畫出平面圖）：
+    廚房（最左下）：冰箱、杯子（放地上：機器人的相機離地只有約 10 公分，桌上的杯子會被桌緣擋住）
+    客廳（左上）：沙發    餐廳（右下）：椅子    書房（右上）    玄關、小房間（中間）    儲藏室（最左上）
+    機器人出生在房子外面的前院（大門那一側），從大門進玄關才能到其他房間
+  新加的東西都來自 Gazebo 模型庫（第一次使用會下載到 ~/.gz/fuel）。
+-->
+<sdf version="1.8">
+  <world name="default">
+    <scene>
+      <shadows>0</shadows>
+    </scene>
+
+    <gui fullscreen='0'>
+      <camera name='user_camera'>
+        <pose frame=''>0.319654 -0.235002 9.29441 0 1.5138 0.009599</pose>
+        <view_controller>orbit</view_controller>
+        <projection_type>perspective</projection_type>
+      </camera>
+    </gui>
+
+    <physics type="ode">
+      <real_time_update_rate>1000.0</real_time_update_rate>
+      <max_step_size>0.001</max_step_size>
+      <real_time_factor>1</real_time_factor>
+      <ode>
+        <solver>
+          <type>quick</type>
+          <iters>150</iters>
+          <precon_iters>0</precon_iters>
+          <sor>1.400000</sor>
+          <use_dynamic_moi_rescaling>1</use_dynamic_moi_rescaling>
+        </solver>
+        <constraints>
+          <cfm>0.00001</cfm>
+          <erp>0.2</erp>
+          <contact_max_correcting_vel>2000.000000</contact_max_correcting_vel>
+          <contact_surface_layer>0.01000</contact_surface_layer>
+        </constraints>
+      </ode>
+    </physics>
+    <plugin filename="gz-sim-physics-system" name="gz::sim::systems::Physics"/>
+    <plugin filename="gz-sim-user-commands-system" name="gz::sim::systems::UserCommands"/>
+    <plugin filename="gz-sim-scene-broadcaster-system" name="gz::sim::systems::SceneBroadcaster"/>
+    <plugin filename="gz-sim-sensors-system" name="gz::sim::systems::Sensors">
+      <render_engine>ogre2</render_engine>
+    </plugin>
+    <plugin filename="gz-sim-imu-system" name="gz::sim::systems::Imu"/>
+
+    <include>
+      <uri>https://fuel.gazebosim.org/1.0/OpenRobotics/models/Ground Plane</uri>
+    </include>
+    <include>
+      <uri>https://fuel.gazebosim.org/1.0/OpenRobotics/models/Sun</uri>
+    </include>
+
+    <model name="turtlebot3_house">
+      <static>1</static>
+      <include>
+        <uri>model://turtlebot3_house</uri>
+      </include>
+    </model>
+
+    <!-- ===== 新加的東西（位置是世界座標，單位公尺）===== -->
+    <!-- 廚房 -->
+    <include>
+      <uri>https://fuel.gazebosim.org/1.0/OpenRobotics/models/Refrigerator</uri>
+      <name>refrigerator</name>
+      <static>true</static>
+      <pose>-7.0 -3.3 0 0 0 0</pose>
+    </include>
+    <include>
+      <uri>https://fuel.gazebosim.org/1.0/GoogleResearch/models/Room_Essentials_Mug_White_Yellow</uri>
+      <name>mug</name>
+      <static>true</static>
+      <pose>-6.3 -2.8 0 0 0 0</pose>
+    </include>
+    <!-- 客廳（不要放在 -4.5：會跟房子原本的垃圾桶疊在一起，物理引擎每秒狂算幾千次碰撞，整個模擬被拖垮）-->
+    <include>
+      <uri>https://fuel.gazebosim.org/1.0/OpenRobotics/models/Sofa</uri>
+      <name>sofa</name>
+      <static>true</static>
+      <pose>-3.4 4.6 0 0 0 -1.5708</pose>
+    </include>
+    <!-- 餐廳 -->
+    <include>
+      <uri>https://fuel.gazebosim.org/1.0/OpenRobotics/models/Chair</uri>
+      <name>chair</name>
+      <static>true</static>
+      <pose>5.7 -2.75 0 0 0 0</pose>
+    </include>
+  </world>
+</sdf>

@@ -1,0 +1,5 @@
+# 在 Windows clone 也維持 LF：WSL / Ubuntu 執行 .sh 遇到 CRLF 會失敗
+* text=auto eol=lf
+*.png binary
+*.jpg binary
+*.pgm binary
