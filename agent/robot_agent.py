@@ -271,9 +271,13 @@ def check(state: State) -> State:
             return push_back("你還沒有用 report 回報結果。請繼續用工具找，或呼叫 report 回報。")
         return {"verdict": "⚠️ 大腦沒有用 report 正式回報"}
     target = str(report.get("target", "")).strip()
+    if not target:                              # 沒寫要找什麼就沒辦法對證據（空白的目標會對上任何一筆確認紀錄）
+        if n < 1 and not over:
+            return push_back("你的 report 沒有寫 target（要找的東西，YOLO 英文名稱，例如 cup）。請重新呼叫 report，寫上 target。")
+        return {"verdict": "⚠️ 大腦的回報沒寫要找什麼 → 沒辦法核對"}
     found = report.get("found") in (True, "true", "True")
     confirmed = [e for e in evidence if e["name"] == "approach" and "確認了 ✅" in e["text"]
-                 and "VLM 第二意見：不同意" not in e["text"]                # 兩雙眼睛都同意才算
+                 and "VLM 第二意見：不同意" not in e["text"]                # VLM 沒反對才算（VLM 出錯時只看 YOLO）
                  and (e["args"].get("target", "").lower() == target.lower() or f"{target}（" in e["text"])]
     if found and confirmed:
         proof = [ln for ln in confirmed[-1]["text"].splitlines() if ln.startswith(("靠近後", "結論"))]
